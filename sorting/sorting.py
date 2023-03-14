@@ -12,7 +12,22 @@ import numpy as np
 
 
 def get_random_sequence(sequence_length: int, max_n: int):
-    return np.random.randint(0, max_n, sequence_length)
+    return [random.randint(1, max_n) for _ in range(sequence_length)]
+
+
+def part_sorted_sequence(sequence_length, max_n):
+    s = get_random_sequence(sequence_length=sequence_length, max_n=max_n)
+    number_of_sorts = random.randrange(sequence_length)
+    start = 0
+    for _ in range(number_of_sorts):
+        end = random.randint(start, sequence_length)
+        if end <= sequence_length - 1:
+            s = s[0:start] + sorted(s[start:end]) + s[end:]
+            start = end
+    return s
+
+
+part_sorted_sequence(100, 10)
 
 
 class SortingAlgorithm:
