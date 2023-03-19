@@ -75,7 +75,12 @@ def get_part_sorted_sequence(sequence_length: int, max_n: int):
 def get_half_sorted_sequence(sequence_length: int, max_n: int):
     random_quarter = get_fully_random_sequence(sequence_length // 4, max_n)
     return random_quarter + sorted(random_quarter + random_quarter) + random_quarter
+
+def get_fully_sorted_sequence(sequence_length: int, max_n: int):
+    return sorted(get_fully_random_sequence(sequence_length=sequence_length, max_n=max_n))
 ```
+
+We used Python's builtin timeit library for precise timing of sorting functions (we excluded input data generation time).
 
 ### Libraries Used
 
