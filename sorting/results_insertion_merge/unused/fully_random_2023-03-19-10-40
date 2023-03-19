@@ -1,0 +1,2 @@
+sequence_length,experiment_number,insertion_sort_time,merge_sort_time,tim_sort_time
+10,1,0.09225037999999586,1.3135410200000024,0.0275142699999833

@@ -8,30 +8,29 @@ from abc import abstractmethod
 from collections import namedtuple
 from typing import MutableSequence
 
-import numpy as np
 
-
-def get_random_sequence(sequence_length: int, max_n: int):
+def get_fully_random_sequence(sequence_length: int, max_n: int):
     return [random.randint(1, max_n) for _ in range(sequence_length)]
 
 
-def part_sorted_sequence(sequence_length, max_n):
-    s = get_random_sequence(sequence_length=sequence_length, max_n=max_n)
+def get_part_sorted_sequence(sequence_length: int, max_n: int):
+    s = get_fully_random_sequence(sequence_length=sequence_length, max_n=max_n)
     number_of_sorts = random.randrange(sequence_length)
     start = 0
     for _ in range(number_of_sorts):
-        end = random.randint(start, sequence_length)
-        if end <= sequence_length - 1:
-            s = s[0:start] + sorted(s[start:end]) + s[end:]
-            start = end
+        end = random.randint(start, min(start + sequence_length // number_of_sorts, sequence_length))
+        s = s[:start] + sorted(s[start:end]) + s[end:]
+        start += sequence_length // number_of_sorts
     return s
 
 
-part_sorted_sequence(100, 10)
+def get_half_sorted_sequence(sequence_length: int, max_n: int):
+    random_quarter = get_fully_random_sequence(sequence_length // 4, max_n)
+    return random_quarter + sorted(random_quarter + random_quarter) + random_quarter
 
 
 class SortingAlgorithm:
-    def __init__(self, sequence: np.array):
+    def __init__(self, sequence: MutableSequence | None):
         self.sequence = sequence
 
     @abstractmethod
@@ -141,6 +140,11 @@ class ShellSort(SortingAlgorithm):
     pass
 
 
+class TimSort(SortingAlgorithm):
+    def sort(self) -> MutableSequence:
+        return sorted(self.sequence)
+
+
 class Test:
     sorting_functions = [
         # BogoSort,
@@ -157,68 +161,93 @@ class Test:
 
     def test(self):
         for _ in range(self.tests_number):
-            random_sequence = get_random_sequence(self.test_sequence_length, self.test_max_n)
+            random_sequence = get_fully_random_sequence(self.test_sequence_length, self.test_max_n)
             for sorting_algorithm in self.sorting_functions:
                 function_sorted = sorting_algorithm(random_sequence.copy()).sort()
                 assert function_sorted == sorted(random_sequence), (sorting_algorithm.__name__, function_sorted)
 
 
-class Timer:
-    pass
-
-
 ExperimentResults = namedtuple("ExperimentResults",
-                               "sequence_length experiment_number selection_sort_time merge_sort_time tim_sort_time")
+                               "sequence_length experiment_number insertion_sort_time merge_sort_time tim_sort_time")
 
 
 class Experiment:
-    experiment_sequence_length_range = list(10 ** i for i in range(1, 5))
-    max_n = 1_000
-    experiment_number = 100
+    def __init__(self, experiment_sequence_length_range, max_n, experiment_number, generate_input_function):
+        self.experiment_sequence_length_range = experiment_sequence_length_range
+        self.max_n = max_n
+        self.experiment_number = experiment_number
+        self.generate_input_function = generate_input_function
 
-    sequence_length = None
+        self.sequence_length = None
 
-    def selection_sort(self):
-        return SelectionSort(get_random_sequence(self.sequence_length, self.max_n)).sort()
+    def get_sorting_function_timer(self, sorting_algorithm: SortingAlgorithm):
+        total_mean_time = 0
+        for _ in range(self.experiment_number):
+            sorting_algorithm.sequence = self.generate_input_function(
+                sequence_length=self.sequence_length, max_n=self.max_n
+            )
+            total_mean_time += timeit.timeit(stmt=sorting_algorithm.sort, number=1) / self.experiment_number
+        return total_mean_time
 
-    def merge_sort(self):
-        return MergeSort(get_random_sequence(self.sequence_length, self.max_n)).sort()
-
-    def tim_sort(self):
-        return sorted(get_random_sequence(self.sequence_length, self.max_n))
-
-    def get_sorting_function_timer(self, sorting_function):
-        return timeit.timeit(stmt=lambda: sorting_function(), number=self.experiment_number)
-
-    def run_and_get_results(self) -> ExperimentResults:
-        calculations = sum(length ** 2.35 for length in self.experiment_sequence_length_range) * self.experiment_number
+    def iterate_over_different_sequence_length_results(self) -> ExperimentResults:
+        calculations = sum(length ** 2.5 for length in self.experiment_sequence_length_range) * self.experiment_number
         time_estimated = calculations / (10 ** 9)
         print(f"Time estimated: {round(time_estimated, 2)}s")
         start = time.time()
+
+        insertion_sort = InsertionSort(sequence=None)
+        merge_sort = MergeSort(sequence=None)
+        tim_sort = TimSort(sequence=None)
 
         for sequence_length in self.experiment_sequence_length_range:
             self.sequence_length = sequence_length
             yield ExperimentResults(
                 sequence_length=sequence_length,
                 experiment_number=self.experiment_number,
-                selection_sort_time=self.get_sorting_function_timer(self.selection_sort),
-                merge_sort_time=self.get_sorting_function_timer(self.merge_sort),
-                tim_sort_time=self.get_sorting_function_timer(self.tim_sort),
+                insertion_sort_time=self.get_sorting_function_timer(insertion_sort),
+                merge_sort_time=self.get_sorting_function_timer(merge_sort),
+                tim_sort_time=self.get_sorting_function_timer(tim_sort),
             )
         print(f"Time measured: {time.time() - start}s")
 
-    def run_and_save_results_in_csv(self):
+    def run_and_save_results_in_csv(self, file_name: str):
         today = datetime.datetime.today()
-        results = list(self.run_and_get_results())
-        with open(f"results_{today.date()}-{today.hour}-{today.minute}", "w", newline="") as f:
+        results = self.iterate_over_different_sequence_length_results()
+        with open(f"results_insertion_merge/{file_name}_{today.date()}-{today.hour}-{today.minute}", "w",
+                  newline="") as f:
             w = csv.writer(f)
-            w.writerow(results[0]._fields)
+            w.writerow(ExperimentResults._fields)
             for row in results:
                 w.writerow(row)
 
 
 # Test(test_sequence_length=100, test_max_n=100, tests_number=100).test()
-print(Experiment().run_and_save_results_in_csv())
+RANGE = list(10 ** i for i in range(1, 5))
+MAX_N = 1_000
+EXPERIMENT_NUMBER = 1_00
+
+# Experiment(
+#     experiment_sequence_length_range=RANGE,
+#     max_n=MAX_N,
+#     experiment_number=EXPERIMENT_NUMBER,
+#     generate_input_function=get_fully_random_sequence
+# ).run_and_save_results_in_csv("fully_random.csv")
+#
+# Experiment(
+#     experiment_sequence_length_range=RANGE,
+#     max_n=MAX_N,
+#     experiment_number=EXPERIMENT_NUMBER,
+#     generate_input_function=get_part_sorted_sequence
+# ).run_and_save_results_in_csv("part_sorted.csv")
+
+Experiment(
+    experiment_sequence_length_range=RANGE,
+    max_n=MAX_N,
+    experiment_number=EXPERIMENT_NUMBER,
+    generate_input_function=get_half_sorted_sequence
+).run_and_save_results_in_csv("half_sorted.csv")
 
 # Write on insertion and merge sort
 # Arnold C bonus
+
+# Problem - random generation differs
