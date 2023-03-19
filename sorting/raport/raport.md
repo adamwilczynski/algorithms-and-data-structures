@@ -10,7 +10,7 @@ This algorithm iterates over all elements in a list and for each element (starti
 
 #### Worst Case
 
-Numbers are sorted, but from greatest to the smallest (decreasing order - maximum number of operations will be performed)
+Numbers are sorted, but from greatest to the smallest (decreasing order - maximum number of operations will be performed).
 
 #### Average Case
 
@@ -83,7 +83,7 @@ pandas, matplotlib, seaborn
 
 ## Experiment Results
 
-Graphs below show a positive correlation between chaos and time spent on sorting a sequence.
+Graphs below are sorted in order of increasing entropy.
 
 ### Fully Sorted Input
 <img src="experiment_visuals/fully_sorted.png" alt="Fully Sorted" height=400>
@@ -99,20 +99,11 @@ Graphs below show a positive correlation between chaos and time spent on sorting
 
 ## Conclusions
 
-### Insertion Sort
+Measured complexity does not differ from the expected one.
 
-#### Measured Complexity
+Graphs show a positive correlation between chaos of a sequence and time spent on sorting.
 
-Ranging between O(n) in best case to O(n log n)
+It is worth pointing out, the fact that insertion sort in faster than merge sort on sequences of few elements.
 
-### Merge Sort
-
-#### Measured Complexity
-
-Close to O(n log n)
-
-### Tim Sort
-
-#### Measured Complexity
 
 
