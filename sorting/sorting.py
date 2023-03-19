@@ -29,6 +29,10 @@ def get_half_sorted_sequence(sequence_length: int, max_n: int):
     return random_quarter + sorted(random_quarter + random_quarter) + random_quarter
 
 
+def get_fully_sorted_sequence(sequence_length: int, max_n: int):
+    return sorted(get_fully_random_sequence(sequence_length=sequence_length, max_n=max_n))
+
+
 class SortingAlgorithm:
     def __init__(self, sequence: MutableSequence | None):
         self.sequence = sequence
@@ -213,7 +217,7 @@ class Experiment:
     def run_and_save_results_in_csv(self, file_name: str):
         today = datetime.datetime.today()
         results = self.iterate_over_different_sequence_length_results()
-        with open(f"results_insertion_merge/{file_name}_{today.date()}-{today.hour}-{today.minute}", "w",
+        with open(f"results_insertion_merge/{file_name}_{today.date()}-{today.hour}-{today.minute}.csv", "w",
                   newline="") as f:
             w = csv.writer(f)
             w.writerow(ExperimentResults._fields)
@@ -225,27 +229,6 @@ class Experiment:
 RANGE = list(10 ** i for i in range(1, 5))
 MAX_N = 1_000
 EXPERIMENT_NUMBER = 1_00
-
-# Experiment(
-#     experiment_sequence_length_range=RANGE,
-#     max_n=MAX_N,
-#     experiment_number=EXPERIMENT_NUMBER,
-#     generate_input_function=get_fully_random_sequence
-# ).run_and_save_results_in_csv("fully_random.csv")
-#
-# Experiment(
-#     experiment_sequence_length_range=RANGE,
-#     max_n=MAX_N,
-#     experiment_number=EXPERIMENT_NUMBER,
-#     generate_input_function=get_part_sorted_sequence
-# ).run_and_save_results_in_csv("part_sorted.csv")
-
-Experiment(
-    experiment_sequence_length_range=RANGE,
-    max_n=MAX_N,
-    experiment_number=EXPERIMENT_NUMBER,
-    generate_input_function=get_half_sorted_sequence
-).run_and_save_results_in_csv("half_sorted.csv")
 
 # Write on insertion and merge sort
 # Arnold C bonus
