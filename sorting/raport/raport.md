@@ -2,7 +2,7 @@ Kuba Czech | Adam Wilczyński
 
 # Sorting Algorithms
 
-## Algorithm Description
+## Desriptions of the Algorithms
 
 ### Insertion Sort
 
@@ -108,7 +108,7 @@ Measured complexity does not differ from the expected one.
 
 Graphs show a positive correlation between chaos of a sequence and time spent on sorting.
 
-It is worth pointing out, the fact that insertion sort in faster than merge sort on sequences of few elements.
+It is worth pointing out, the fact that insertion sort is faster than merge sort on sequences of few elements.
 
 
 
