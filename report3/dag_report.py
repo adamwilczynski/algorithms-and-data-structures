@@ -1,5 +1,5 @@
 import random
-from collections import defaultdict, deque, namedtuple
+from collections import deque, namedtuple
 
 import numpy as np
 
