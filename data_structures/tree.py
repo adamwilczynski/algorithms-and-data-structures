@@ -1,7 +1,3 @@
-RED = object()
-BLACK = object()
-
-
 class Node:
     def __init__(self, child, color):
         self.child = child

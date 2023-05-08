@@ -17,7 +17,7 @@ class DAG:
 
         self.visited = None
 
-    def get_all_possible_edges(self):
+    def get_all_possible_edges_acyclic(self):
         edge_list = []
         for i in range(1, self.vertex_count):
             for j in range(0, i):
@@ -27,7 +27,7 @@ class DAG:
     def create_random_directed_acyclic_graph(self) -> list:
         if self.edge_count > self.vertex_count * (self.vertex_count - 1):
             raise ValueError("Too many edges")
-        edge_list = self.get_all_possible_edges()
+        edge_list = self.get_all_possible_edges_acyclic()
         random.shuffle(edge_list)
         return edge_list[:self.edge_count]
 

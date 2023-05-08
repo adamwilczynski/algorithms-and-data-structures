@@ -50,7 +50,7 @@ Node = namedtuple("Node", "value way")
 
 
 class BreadthFirstSearch(GraphSearchRecursiveAlgorithm):
-    def search(self):
+    def search(self, way=None, current_node=None):
         queue = deque([
             Node(self.start, [self.start])
         ])
