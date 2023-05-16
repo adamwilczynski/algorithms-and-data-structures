@@ -8,6 +8,10 @@ from abc import abstractmethod
 from collections import namedtuple
 from typing import MutableSequence
 
+RANGE = list(10 ** i for i in range(1, 5))
+MAX_N = 1_000
+EXPERIMENT_NUMBER = 1_00
+
 
 def get_fully_random_sequence(sequence_length: int, max_n: int):
     return [random.randint(1, max_n) for _ in range(sequence_length)]
@@ -223,14 +227,3 @@ class Experiment:
             w.writerow(ExperimentResults._fields)
             for row in results:
                 w.writerow(row)
-
-
-# Test(test_sequence_length=100, test_max_n=100, tests_number=100).test()
-RANGE = list(10 ** i for i in range(1, 5))
-MAX_N = 1_000
-EXPERIMENT_NUMBER = 1_00
-
-# Write on insertion and merge sort
-# Arnold C bonus
-
-# Problem - random generation differs
