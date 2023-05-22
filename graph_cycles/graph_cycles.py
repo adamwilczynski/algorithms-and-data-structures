@@ -79,16 +79,20 @@ def find_euler_cycle_using_hierholzer(connected_graph) -> deque:
     return deque()
 
 
-def find_hamiltonian_cycle_using_backtracking(connected_graph: {int: [int]}, path: [int]) -> deque:
+def find_hamiltonian_cycle_using_backtracking(connected_graph: {int: [int]}, path: [int]) -> [int]:
+    if not path:
+        path = list(connected_graph.keys())[:1]
+
     u = path[-1]
-    if len(path) == u:
+
+    if len(path) == len(connected_graph.keys()):
         v = path[0]
         if v in connected_graph[u]:
             return path
-        return deque()
+        return []
+
     for v in connected_graph[u]:
         if v not in path:
-            path.append(v)
-            if return_value := find_hamiltonian_cycle_using_backtracking(connected_graph, path):
+            if return_value := find_hamiltonian_cycle_using_backtracking(connected_graph, path + [v]):
                 return return_value
-    return deque()
+    return []

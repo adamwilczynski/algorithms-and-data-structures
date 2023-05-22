@@ -82,12 +82,23 @@ class TestDisconnectedGraphFunctions:
                ]
 
     def test_hamiltonian_backtracking(self):
-        print(self.disconnected_graph)
+        disconnected_graph = {
+            1: [2, 3],
+            2: [1, 3],
+            3: [1, 2],
+
+            4: [5, 6],
+            5: [4],
+            6: [4],
+
+            7: [],
+        }
+
         assert [
-            graph_cycles.find_hamiltonian_cycle_using_backtracking(connected_graph, [1])
-            for connected_graph in graph_cycles.get_connected_graph_list(self.disconnected_graph)
+            graph_cycles.find_hamiltonian_cycle_using_backtracking(connected_graph, [])
+            for connected_graph in graph_cycles.get_connected_graph_list(disconnected_graph)
         ] == [
-            deque([1, 2, 3]),
-            deque(),
-            deque(),
+            [1, 2, 3],
+            [],
+            [],
         ]
