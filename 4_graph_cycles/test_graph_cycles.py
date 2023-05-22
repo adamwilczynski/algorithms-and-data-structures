@@ -37,7 +37,7 @@ class TestConnectedGraphFunctions:
 
     def test_dfs(self):
         dfs = graph_cycles.DFS()
-        assert dfs.search(1, self.connected_graph) == deque([1, 2, 3])
+        assert dfs.traverse(1, self.connected_graph) == deque([1, 2, 3])
 
 
 class TestDisconnectedGraphFunctions:
@@ -69,7 +69,6 @@ class TestDisconnectedGraphFunctions:
             {7: []},
         ]
 
-    @classmethod
     def test_hierholzer_euler_cycle(self):
         print(self.disconnected_graph)  # Strange Error
         assert [
@@ -80,6 +79,19 @@ class TestDisconnectedGraphFunctions:
                    deque([]),
                    deque([]),
                ]
+
+    def test_hierholzer_euler_cycle_nonexistent(self):
+        graph_with_cycle = {
+            1: [2, 5],
+            2: [1, 3],
+            3: [2, 4],
+            4: [3, 5, 7],
+            5: [1, 4, 6],
+            6: [5, 7, 8],
+            7: [4, 6, 8],
+            8: [6, 7],
+        }
+        assert not graph_cycles.find_euler_cycle_using_hierholzer(graph_with_cycle)
 
     def test_hamiltonian_backtracking(self):
         disconnected_graph = {
@@ -102,3 +114,16 @@ class TestDisconnectedGraphFunctions:
             [],
             [],
         ]
+
+    def test_hamiltonian_backtracking_ring(self):
+        ring_graph = {
+            1: [8, 2],
+            2: [1, 3],
+            3: [2, 4],
+            4: [3, 5],
+            5: [4, 6],
+            6: [5, 7],
+            7: [6, 8],
+            8: [7, 1],
+        }
+        assert graph_cycles.find_hamiltonian_cycle_using_backtracking(ring_graph, [])

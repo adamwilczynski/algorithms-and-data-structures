@@ -2,7 +2,7 @@
 
 ## Reports:
 
-[Basic Graph Algorithms](BasicGraphAlgorithms/report3.ipynb)
+[Basic Graph Algorithms](3_basic_graph_algorithms/report3.ipynb)
 
-[Sorting Algorithms](SortingAlgorithms/report/raport.md)
+[Sorting Algorithms](1_sorting_algorithms/report/raport.md)
 
