@@ -71,7 +71,7 @@ class TestDisconnectedGraphFunctions:
 
     @classmethod
     def test_hierholzer_euler_cycle(self):
-        print(self.disconnected_graph)
+        print(self.disconnected_graph)  # Strange Error
         assert [
                    graph_cycles.find_euler_cycle_using_hierholzer(connected_graph)
                    for connected_graph in graph_cycles.get_connected_graph_list(self.disconnected_graph)
