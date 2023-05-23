@@ -17,6 +17,7 @@ def check_and_copy_graph(graph):
         raise ValueError("Not an undirected graph.")
     return copy.deepcopy(graph)
 
+
 def generate_random_simple_graph(vertex_count: int, edge_count: int) -> dict:
     """O(v)"""
     if edge_count > vertex_count * (vertex_count - 1):
@@ -25,14 +26,25 @@ def generate_random_simple_graph(vertex_count: int, edge_count: int) -> dict:
     vertices = list(range(vertex_count))
     initial_vertices = random.choices(vertices, k=edge_count)
 
-    possible_terminal_vertices = set(vertices)
+    all_vertices = set(vertices)
 
     graph = {v: [] for v in vertices}
     for initial_vertex in initial_vertices:
-        terminal_vertex = (possible_terminal_vertices - {initial_vertex}).pop()
-        graph[initial_vertex].append(terminal_vertex)
-        graph[terminal_vertex].append(initial_vertex)
+        possible_terminal_vertices = all_vertices - {initial_vertex} - set(graph[initial_vertex])
+        if possible_terminal_vertices:
+            terminal_vertex = possible_terminal_vertices.pop()
+            graph[initial_vertex].append(terminal_vertex)
+            graph[terminal_vertex].append(initial_vertex)
     return graph
+
+
+def generate_euler_and_hamilton_cycle_graph(vertex_count: int):
+    """O(v)"""
+    vertices = list(range(vertex_count))
+    return {
+        initial_vertex: [vertices[initial_vertex - 1], initial_vertex + 1 if initial_vertex + 1 != vertex_count else 0]
+        for initial_vertex in vertices
+    }
 
 
 def count_odd_degrees(graph: {int: [int]}):

@@ -20,9 +20,20 @@ class TestGraphGeneration:
         assert len(graph) == node_count and 2 * edge_count == sum(
             len(vertex_list) for vertex_list in graph.values()
         )
+    @staticmethod
+    def test_generate_euler_and_hamilton_cycle_graph():
+        assert graph_cycles.generate_euler_and_hamilton_cycle_graph(8) == {
+            0: [7, 1],
+            1: [0, 2],
+            2: [1, 3],
+            3: [2, 4],
+            4: [3, 5],
+            5: [4, 6],
+            6: [5, 7],
+            7: [6, 0],
+        }
 
-
-class TestConnectedGraphFunctions:
+class TestSimpleRingGraph:
     connected_graph = {
         1: [2, 3],
         2: [1, 3],
@@ -40,7 +51,7 @@ class TestConnectedGraphFunctions:
         assert dfs.traverse(1, self.connected_graph) == deque([1, 2, 3])
 
 
-class TestDisconnectedGraphFunctions:
+class TestDisconnectedGraph:
     disconnected_graph = {
         1: [2, 3],
         2: [1, 3],
@@ -80,50 +91,53 @@ class TestDisconnectedGraphFunctions:
                    deque([]),
                ]
 
-    def test_hierholzer_euler_cycle_nonexistent(self):
-        graph_with_cycle = {
-            1: [2, 5],
-            2: [1, 3],
-            3: [2, 4],
-            4: [3, 5, 7],
-            5: [1, 4, 6],
-            6: [5, 7, 8],
-            7: [4, 6, 8],
-            8: [6, 7],
-        }
-        assert not graph_cycles.find_euler_cycle_using_hierholzer(graph_with_cycle)
 
-    def test_hamiltonian_backtracking(self):
-        disconnected_graph = {
-            1: [2, 3],
-            2: [1, 3],
-            3: [1, 2],
+def test_hierholzer_euler_cycle_nonexistent():
+    graph_with_hamiltonian_cycle_only = {
+        1: [2, 5],
+        2: [1, 3],
+        3: [2, 4],
+        4: [3, 5, 7],
+        5: [1, 4, 6],
+        6: [5, 7, 8],
+        7: [4, 6, 8],
+        8: [6, 7],
+    }
+    assert not graph_cycles.find_euler_cycle_using_hierholzer(graph_with_hamiltonian_cycle_only)
 
-            4: [5, 6],
-            5: [4],
-            6: [4],
 
-            7: [],
-        }
+def test_hamiltonian_backtracking():
+    disconnected_graph = {
+        1: [2, 3],
+        2: [1, 3],
+        3: [1, 2],
 
-        assert [
-            graph_cycles.find_hamiltonian_cycle_using_backtracking(connected_graph, [])
-            for connected_graph in graph_cycles.get_connected_graph_list(disconnected_graph)
-        ] == [
-            [1, 2, 3],
-            [],
-            [],
-        ]
+        4: [5, 6],
+        5: [4],
+        6: [4],
 
-    def test_hamiltonian_backtracking_ring(self):
-        ring_graph = {
-            1: [8, 2],
-            2: [1, 3],
-            3: [2, 4],
-            4: [3, 5],
-            5: [4, 6],
-            6: [5, 7],
-            7: [6, 8],
-            8: [7, 1],
-        }
-        assert graph_cycles.find_hamiltonian_cycle_using_backtracking(ring_graph, [])
+        7: [],
+    }
+
+    assert [
+               graph_cycles.find_hamiltonian_cycle_using_backtracking(connected_graph, [])
+               for connected_graph in graph_cycles.get_connected_graph_list(disconnected_graph)
+           ] == [
+               [1, 2, 3],
+               [],
+               [],
+           ]
+
+
+def test_hamiltonian_backtracking_ring_exists():
+    ring_graph = {
+        1: [8, 2],
+        2: [1, 3],
+        3: [2, 4],
+        4: [3, 5],
+        5: [4, 6],
+        6: [5, 7],
+        7: [6, 8],
+        8: [7, 1],
+    }
+    assert graph_cycles.find_hamiltonian_cycle_using_backtracking(ring_graph, [])
